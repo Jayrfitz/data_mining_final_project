@@ -1,0 +1,101 @@
+---
+title: "Student Alcohol Consumption"
+author: "Antonio Soto, Andrew Diesh, Jason Fitzgerald"
+date: "April 22, 2017"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(prompt=TRUE, comment="", echo=TRUE)
+```
+
+
+```{r}
+dat = read.csv("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/student-por.csv", stringsAsFactors = T)
+library(rpart)
+library(rpart.plot)
+library(maptree)
+library(e1071)
+
+source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
+source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
+set.seed(123)
+```
+
+```{r}
+split = split_data(dat)
+tr_dat = split[[1]]
+te_dat = split[[2]]
+```
+
+```{r}
+str(dat)
+```
+
+
+```{r}
+summary(dat)
+```
+
+```{r}
+fit = naiveBayes(school ~ .,data = tr_dat)
+```
+
+```{r}
+fit$tables$reason
+```
+
+```{r}
+predicted = predict(fit, newdata=te_dat)
+length(predicted)
+
+actuals = te_dat$school
+length(actuals)
+```
+```{r}
+conf_mtx = table(predicted, actuals)
+conf_mtx
+```
+```{r}
+mean(predicted == actuals)
+```
+
+
+```{r}
+tr_dat$freetime3 = factor(ifelse(tr_dat$freetime >= 3, yes = "freet >3", no = 'freet < 3'))
+fit = rpart(freetime3 ~ G3,data=tr_dat, method="class")
+prp(fit, extra=106, varlen=-10,
+    main="Regreesion tree age over 50 and there max heart rates",
+    box.col=c("palegreen", "pink")[fit$frame$yval])
+```
+
+```{r}
+predicted = predict(fit, newdata=tr_dat, type ="class")
+actuals = tr_dat$freetime3
+conf_mtx = table(predicted, actuals)
+conf_mtx
+```
+
+```{r}
+succ_rate = mean(predicted == actuals)
+round(succ_rate, 3)
+```
+
+
+
+G1
+```{r}
+table(tr_dat$G1)
+
+```
+G2
+```{r}
+table(tr_dat$G2)
+
+```
+G3
+```{r}
+
+table(tr_dat$G3)
+```
+
