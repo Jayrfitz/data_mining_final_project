@@ -20,7 +20,6 @@ Paulo Cortez and Alice Silva went on to use this dataset for their study, _Using
 The data was acquired from Kaggle, a data science platform, at https://www.kaggle.com/uciml/student-alcohol-consumption. 
 
 ```{r}
-
 dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
 library(rpart)
 library(rpart.plot)
@@ -31,6 +30,61 @@ source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/F
 source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/lin-regr-util.R")
 set.seed(123)
 ```
+
+
+```{r}
+
+fit = rpart(G3 ~ studytime + freetime + goout + absences + Dalc + Walc + activities,  data=dat, method="class")
+
+```
+
+
+```{r}
+par(mar = c(3, 15, 3, 3))
+barplot(fit$variable.importance, main = "Variable Importance Plot", horiz = TRUE, las = 1)
+
+```
+
+# Data Exploration
+
+
+```{r}
+
+ageOfStudents= table(dat$age)
+pie(ageOfStudents)
+
+```
+
+```{r}
+
+
+hist(dat$absences, main = "number of abscenses", col = "red4")
+
+
+```
+
+
+```{r}
+hist(dat$G3, main = "Student's Final Grades", xlab = "Grades", col = "red4")
+
+
+
+```
+
+```{r}
+
+plot(density(dat$Walc, main = "Student's Weekend Alcohol Consumption", col = "red4"))
+
+
+```
+
+```{r}
+
+plot(studytime ~ age, data = dat, main = "Student's Weekend Alcohol Consumption", col = "red4")
+
+
+```
+
 
 ```{r}
 split = split_data(dat)
@@ -45,6 +99,54 @@ str(dat)
 
 ```{r}
 summary(dat)
+```
+
+```{r}
+
+te_dat$passingGrade = factor(ifelse(te_dat$G3 >= 12, "Pass", "Fail"))
+
+```
+
+
+
+```{r}
+
+fit = rpart(passingGrade ~ absences + studytime, data = te_dat, method = "class")
+prp(fit, extra = 106, varlen = -10, main ="classifiation for grades", box.col = c("red", "green")[fit$frame$yval])
+
+
+```
+
+```{r}
+
+summary(fit)
+
+```
+
+```{r}
+
+str(fit)
+
+```
+
+
+```{r}
+
+predicted = predict(fit, te_dat, type = "class")
+actual = te_dat$passingGrade
+confusionMatrix = table(actual, predicted)
+confusionMatrix
+
+length(predicted)
+length(actual)
+
+```
+
+
+```{r}
+
+#mean(actual == predicted)
+
 ```
 
 ```{r}
