@@ -20,14 +20,25 @@ Paulo Cortez and Alice Silva went on to use this dataset for their study, _Using
 The data was acquired from Kaggle, a data science platform, at https://www.kaggle.com/uciml/student-alcohol-consumption. 
 
 ```{r}
-dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
+# jason
+dat = read.csv("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/student-por.csv", stringsAsFactors = T)
+# andrew
+# dat = read.csv("/Users/AndrewDiesh/Desktop/student-por.csv", stringsAsFactors = T)
+# antonio
+# dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
 library(rpart)
 library(rpart.plot)
 library(maptree)
 library(e1071)
-
-source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/class-util.R")
-source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/lin-regr-util.R")
+# jason
+source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
+source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
+# andrew
+# source("/Users/AndrewDiesh/Desktop/class-util.R")
+# source("/Users/AndrewDiesh/Documents/CST\ 463/HW10/lin-regr-util.R")
+# antonio
+# source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/class-util.R")
+# source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/lin-regr-util.R")
 set.seed(123)
 ```
 
@@ -49,9 +60,13 @@ barplot(fit$variable.importance, main = "Variable Importance Plot", horiz = TRUE
 
 
 ```{r}
+dat$pieAges = ifelse(dat$age >= 20, '+20', dat$age)
+ageOfStudents= table(dat$pieAges)
 
-ageOfStudents= table(dat$age)
-pie(ageOfStudents)
+lbs = c(paste (names(table(dat$pieAges)), '=', round(table(dat$pieAges)/nrow(dat)*100,digit= 1), '%'))
+
+pie(ageOfStudents, labels= lbs, main = 'Percent of Student Ages')
+
 
 ```
 
