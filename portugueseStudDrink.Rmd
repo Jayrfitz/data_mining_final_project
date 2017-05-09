@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(prompt=TRUE, comment="", echo=TRUE)
 ```
 
-##<u>Objective</u>
+###**Objective**
 Given the tools and techniques learned throughout the past four months we want to use these to analyze a dataset of our choosing and answer some question using prediction models.
 
 After digging through different datasets we narrowed it down to a dataset on UFO sightings, one on salaries in the city of San Francisco, and one regarding student alcohol consumption.
@@ -21,69 +21,70 @@ The data was acquired from Kaggle, a data science platform, at https://www.kaggl
 
 ```{r}
 # jason
-dat = read.csv("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/student-por.csv", stringsAsFactors = T)
+#dat = read.csv("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/student-por.csv", stringsAsFactors = T)
 # andrew
 # dat = read.csv("/Users/AndrewDiesh/Desktop/student-por.csv", stringsAsFactors = T)
 # antonio
-# dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
+dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
 library(rpart)
 library(rpart.plot)
 library(maptree)
 library(e1071)
 # jason
-source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
-source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
+#source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
+#source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
 # andrew
 # source("/Users/AndrewDiesh/Desktop/class-util.R")
 # source("/Users/AndrewDiesh/Documents/CST\ 463/HW10/lin-regr-util.R")
 # antonio
-# source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/class-util.R")
-# source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/lin-regr-util.R")
+source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/class-util.R")
+source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/lin-regr-util.R")
 set.seed(123)
 ```
 
 
+###**Data Exploration**
+Now that we have our data we'll take a look at a few plots to see what data we're working with.
+
+Our data revolves around secondary school students, therefore it would be useful to take a look at what ages are represented.
 ```{r}
+dat$pieAges = ifelse(dat$age >= 20, '+20', dat$age)
+ageOfStudents= table(dat$pieAges)
 
+lbs = c(paste (names(table(dat$pieAges)), '-', round(table(dat$pieAges)/nrow(dat)*100,digit= 1), '%'))
+
+pie(ageOfStudents, labels= lbs, main = 'Student Ages')
+```
+
+Our models will try to predict what the student's final grades will be. Here we can see what the actual final grades in our data are.
+```{r}
+hist(dat$G3, main = "Student's Final Grades", xlab = "Final Grades. (Out of 20)", col = "red4")
+```
+It's reasonable to believe that the higher number of absences a student has, the lower their final grade might be. As such, we'll take a look at the number of absences for this data. For a given number of absences, we'll see how many students were absent that number of times.
+```{r}
+par(mar=c(3, 10, 3, 3))
+barplot(sort(table(dat$absences), decreasing=FALSE), horiz=TRUE, las=1, main="Frequency", col="firebrick", ylab="Number of Absences", xlim=c(0, 250))
+grid(nx=25, ny=0, col="black")
+```
+
+
+
+
+
+
+
+
+
+
+
+```{r}
 fit = rpart(G3 ~ studytime + freetime + goout + absences + Dalc + Walc + activities,  data=dat, method="class")
-
 ```
 
 
 ```{r}
 par(mar = c(3, 15, 3, 3))
 barplot(fit$variable.importance, main = "Variable Importance Plot", horiz = TRUE, las = 1)
-
-```
-
-# Data Exploration
-
-
-```{r}
-dat$pieAges = ifelse(dat$age >= 20, '+20', dat$age)
-ageOfStudents= table(dat$pieAges)
-
-lbs = c(paste (names(table(dat$pieAges)), '=', round(table(dat$pieAges)/nrow(dat)*100,digit= 1), '%'))
-
-pie(ageOfStudents, labels= lbs, main = 'Percent of Student Ages')
-
-
-```
-
-```{r}
-
-
-hist(dat$absences, main = "number of abscenses", col = "red4")
-
-
-```
-
-
-```{r}
-hist(dat$G3, main = "Student's Final Grades", xlab = "Grades", col = "red4")
-
-
-
 ```
 
 ```{r}
