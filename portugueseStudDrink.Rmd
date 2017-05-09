@@ -88,17 +88,18 @@ barplot(fit$variable.importance, main = "Variable Importance Plot", horiz = TRUE
 ```
 
 ```{r}
-
-plot(density(dat$Walc), main = "Student's Weekend Alcohol Consumption", col = "red4")
+plot(density(dat$Walc), main = "Density Plot on Student Workday/Weekend Alcohol Consumption", col = "red4", xlim = c(0, 5), ylim = c(0, 2), xlab = "Scale of 1-5") # red4: weekend
+lines(density(dat$Dalc), col = "blue") # blue: work dat 
+legend("topright", c("weekend consumption", "work day consumption"), pch = 15, col = c("red4", "blue"), inset = 0.05)
 
 
 ```
 
 ```{r}
-plot(density(dat$G1*5), main = "Student's grades", col = "red4", ylim=c(0,0.035), xlab = 'grade out of 100', xlim=c(0,100),lwd = 2)
-lines(density(dat$G2*5), col="green",lwd = 2)
-lines(density(dat$G3*5), col="blue",lwd = 2)
-legend("topleft", c("grade after 1st test","grade after 2nd test","final grade"), pch = 15,col = c("red4","green", 'blue'),
+plot(density(dat$G1*5), main = "Student's grades", col = "red4", ylim=c(0,0.035), xlab = 'grade out of 100', xlim=c(0,100),lwd = 3)
+lines(density(dat$G2*5), col="darkgreen",lwd = 3)
+lines(density(dat$G3*5), col="blue",lwd = 3)
+legend("topleft", c("grade after 1st test","grade after 2nd test","final grade"), pch = 15,col = c("red4","darkgreen", 'blue'),
        inset = .05)
 ```
 
@@ -183,10 +184,10 @@ mean(predicted == actuals)
 
 
 ```{r}
-tr_dat$freetime3 = factor(ifelse(tr_dat$freetime >= 3, yes = "freet >3", no = 'freet < 3'))
+tr_dat$freetime3 = factor(ifelse(tr_dat$freetime >= 3, yes = "fTime > 3", no = 'fTime < 3'))
 fit = rpart(freetime3 ~ G3,data=tr_dat, method="class")
 prp(fit, extra=106, varlen=-10,
-    main="Regreesion tree age over 50 and there max heart rates",
+    main="Freetime over 3 on scale from 1-5 dependent on the final grade G3.",
     box.col=c("palegreen", "pink")[fit$frame$yval])
 ```
 
