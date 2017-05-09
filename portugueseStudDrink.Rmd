@@ -88,14 +88,14 @@ hist(dat$G3, main = "Student's Final Grades", xlab = "Grades", col = "red4")
 
 ```{r}
 
-plot(density(dat$Walc, main = "Student's Weekend Alcohol Consumption", col = "red4"))
+plot(density(dat$Walc), main = "Student's Weekend Alcohol Consumption", col = "red4")
 
 
 ```
 
 ```{r}
 
-plot(studytime ~ age, data = dat, main = "Student's Weekend Alcohol Consumption", col = "red4")
+# plot(studytime ~ age, data = dat, main = "Student's Weekend Alcohol Consumption", col = "red4")
 
 
 ```
@@ -132,17 +132,9 @@ prp(fit, extra = 106, varlen = -10, main ="classifiation for grades", box.col = 
 
 ```
 
-```{r}
 
-summary(fit)
 
-```
 
-```{r}
-
-str(fit)
-
-```
 
 
 ```{r}
@@ -160,12 +152,12 @@ length(actual)
 
 ```{r}
 
-#mean(actual == predicted)
+mean(actual == predicted)
 
 ```
 
 ```{r}
-fit = naiveBayes(school ~ .,data = tr_dat)
+fit = naiveBayes(school ~ reason + address + guardian,data = tr_dat)
 ```
 
 ```{r}
