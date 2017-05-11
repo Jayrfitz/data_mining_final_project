@@ -21,9 +21,9 @@ The data was acquired from Kaggle, a data science platform, at https://www.kaggl
 
 ```{r}
 # jason
-dat = read.csv("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/student-por.csv", stringsAsFactors = T)
+#dat = read.csv("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/student-por.csv", stringsAsFactors = T)
 # andrew
-# dat = read.csv("/Users/AndrewDiesh/Desktop/student-por.csv", stringsAsFactors = T)
+dat = read.csv("/Users/AndrewDiesh/Desktop/student-por.csv", stringsAsFactors = T)
 # antonio
 # dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
 library(rpart)
@@ -31,11 +31,11 @@ library(rpart.plot)
 library(maptree)
 library(e1071)
 # jason
-source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
-source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
+# source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
+# source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
 # andrew
-# source("/Users/AndrewDiesh/Desktop/class-util.R")
-# source("/Users/AndrewDiesh/Documents/CST\ 463/HW10/lin-regr-util.R")
+source("/Users/AndrewDiesh/Desktop/class-util.R") 
+source("/Users/AndrewDiesh/Documents/CST\ 463/HW10/lin-regr-util.R")
 # antonio
 # source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/class-util.R")
 # source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/lin-regr-util.R")
@@ -75,6 +75,7 @@ grid(nx=25, ny=0, col="black")
 
 
 
+Our model has some significant predictor variables used to predict a student's final grade earned for the course taken. Below, we can see some of these variables that can effect the final grade negatively.  
 
 
 ```{r}
@@ -82,14 +83,17 @@ fit = rpart(G3 ~ studytime + freetime + goout + absences + Dalc + Walc + activit
 ```
 
 
+
 ```{r}
 par(mar = c(3, 15, 3, 3))
 barplot(fit$variable.importance, main = "Variable Importance Plot", horiz = TRUE, las = 1, col = 'red4')
 ```
 
+As we can see, Dalc (workday alcohol consumption) and absenses are the most detrimental for a student's final grade for the course. 
+
 ```{r}
-plot(density(dat$Walc), main = "Density Plot on Student Workday/Weekend Alcohol Consumption", col = "red4", xlim = c(0, 5), ylim = c(0, 2), xlab = "Scale of 1-5") # red4: weekend
-lines(density(dat$Dalc), col = "blue") # blue: work dat 
+plot(density(dat$Walc), main = "Density Plot on Student Workday/Weekend Alcohol Consumption", col = "red4", xlim = c(0, 5), ylim = c(0, 2), xlab = "Scale of 1-5", lwd = 3) # red4: weekend
+lines(density(dat$Dalc), col = "blue", lwd = 3) # blue: work dat 
 legend("topright", c("weekend consumption", "work day consumption"), pch = 15, col = c("red4", "blue"), inset = 0.05)
 
 
