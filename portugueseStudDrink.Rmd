@@ -4,7 +4,7 @@ author: "Antonio Soto, Andrew Diesh, Jason Fitzgerald"
 date: "April 22, 2017"
 output: html_document
 ---
-
+  
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(prompt=TRUE, comment="", echo=TRUE)
 ```
@@ -100,7 +100,7 @@ plot(density(dat$G1*5), main = "Student's grades", col = "red4", ylim=c(0,0.035)
 lines(density(dat$G2*5), col="darkgreen",lwd = 3)
 lines(density(dat$G3*5), col="blue",lwd = 3)
 legend("topleft", c("grade after 1st test","grade after 2nd test","final grade"), pch = 15,col = c("red4","darkgreen", 'blue'),
-       inset = .05)
+inset = .05)
 ```
 
 
@@ -122,7 +122,7 @@ summary(dat)
 ```{r}
 
 te_dat$passingGrade = factor(ifelse(te_dat$G3 >= 12, "Pass", "Fail"))
-
+tr_dat$passingGrade = factor(ifelse(tr_dat$G3 >= 12, "Pass", "Fail"))
 ```
 
 
@@ -147,9 +147,6 @@ actual = te_dat$passingGrade
 confusionMatrix = table(actual, predicted)
 confusionMatrix
 
-length(predicted)
-length(actual)
-
 ```
 
 
@@ -165,67 +162,21 @@ tr_errs = c()
 te_actual = te_dat$passingGrade
 tr_sizes = seq(100, nrow(tr_dat), length.out = 20)
 for(tr_size in tr_sizes){
-  tr_dat1 = tr_dat[1:tr_size,]
-  tr_actual = tr_dat1$school
-  tr_dat1$passingGrade = factor(ifelse(tr_dat1$G3 >= 12, "Pass", "Fail"))
-  fit = rpart(passingGrade ~ absences + studytime, data = tr_dat1, method = "class")
-  # fit = naiveBayes(school ~ reason + address + guardian, data = tr_dat1)
-  # error on training set
-  tr_predicted = predict(fit, tr_dat1)
-  err = sum(tr_actual != tr_predicted)/length(tr_predicted)
-  tr_errs = c(tr_errs, err)
-  #error on test set
-  te_predicted = predict(fit, te_dat)
-  err = sum(te_actual != te_predicted)/length(te_predicted)
-  te_errs = c(te_errs, err)
+tr_dat1 = tr_dat[1:tr_size,]
+tr_actual = tr_dat1$passingGrade
+tr_dat1$passingGrade = factor(ifelse(tr_dat1$G3 >= 12, "Pass", "Fail"))
+fit = rpart(passingGrade ~ absences + studytime, data = tr_dat1, method = "class")
+# fit = naiveBayes(school ~ reason + address + guardian, data = tr_dat1)
+# error on training set
+tr_predicted = predict(fit, tr_dat1)
+err = sum(tr_actual != tr_predicted)/length(tr_predicted)
+tr_errs = c(tr_errs, err)
+#error on test set
+te_predicted = predict(fit, te_dat)
+err = sum(te_actual != te_predicted)/length(te_predicted)
+te_errs = c(te_errs, err)
 }
 plot(tr_sizes, tr_errs, type = 'l',lwd = 10, col = 'red')
-lines(tr_sizes, te_errs, type = 'l',lwd = 3, col = 'blue')
-
-
-```
-
-```{r}
-fit2 = naiveBayes(school ~ reason + address + guardian,data = tr_dat)
-```
-
-```{r}
-fit2$tables$reason
-```
-
-```{r}
-predicted = predict(fit2, newdata=te_dat)
-length(predicted)
-
-actuals = te_dat$school
-length(actuals)
-```
-```{r}
-conf_mtx = table(predicted, actuals)
-conf_mtx
-```
-```{r}
-mean(predicted == actuals)
-```
-```{r}
-te_errs = c()
-tr_errs = c()
-te_actual = te_dat$school
-tr_sizes = seq(100, nrow(tr_dat), length.out = 20)
-for(tr_size in tr_sizes){
-  tr_dat1 = tr_dat[1:tr_size,]
-  tr_actual = tr_dat1$school
-  fit2 = naiveBayes(school ~ reason + address + guardian, data = tr_dat1)
-  # error on training set
-  tr_predicted = predict(fit2, tr_dat1)
-  err = sum(tr_actual != tr_predicted)/length(tr_predicted)
-  tr_errs = c(tr_errs, err)
-  #error on test set
-  te_predicted = predict(fit2, te_dat)
-  err = sum(te_actual != te_predicted)/length(te_predicted)
-  te_errs = c(te_errs, err)
-}
-plot(tr_sizes, tr_errs, type = 'l',lwd = 3, col = 'red', ylim = c(0.2,0.29))
 lines(tr_sizes, te_errs, type = 'l',lwd = 3, col = 'blue')
 
 
@@ -235,8 +186,8 @@ lines(tr_sizes, te_errs, type = 'l',lwd = 3, col = 'blue')
 tr_dat$freetime3 = factor(ifelse(tr_dat$freetime >= 3, yes = "fTime > 3", no = 'fTime < 3'))
 fit = rpart(freetime3 ~ G3,data=tr_dat, method="class")
 prp(fit, extra=106, varlen=-10,
-    main="Freetime over 3 on scale from 1-5 dependent on the final grade G3.",
-    box.col=c("palegreen", "pink")[fit$frame$yval])
+main="Freetime over 3 on scale from 1-5 dependent on the final grade G3.",
+box.col=c("palegreen", "pink")[fit$frame$yval])
 ```
 
 ```{r}
@@ -251,6 +202,94 @@ succ_rate = mean(predicted == actuals)
 round(succ_rate, 3)
 ```
 
+
+
+
+
+
+```{r}
+fit2 = naiveBayes(school ~ reason + address + guardian,data = tr_dat)
+```
+
+```{r}
+fit2$tables$reason
+```
+
+```{r}
+predicted = predict(fit2, newdata=te_dat)
+actuals = te_dat$school
+conf_mtx = table(predicted, actuals)
+conf_mtx
+```
+```{r}
+mean(predicted == actuals)
+```
+```{r}
+te_errs = c()
+tr_errs = c()
+te_actual = te_dat$school
+tr_sizes = seq(100, nrow(tr_dat), length.out = 20)
+for(tr_size in tr_sizes){
+tr_dat1 = tr_dat[1:tr_size,]
+tr_actual = tr_dat1$school
+fit2 = naiveBayes(school ~ reason + address + guardian, data = tr_dat1)
+# error on training set
+tr_predicted = predict(fit2, tr_dat1)
+err = sum(tr_actual != tr_predicted)/length(tr_predicted)
+tr_errs = c(tr_errs, err)
+#error on test set
+te_predicted = predict(fit2, te_dat)
+err = sum(te_actual != te_predicted)/length(te_predicted)
+te_errs = c(te_errs, err)
+}
+plot(tr_sizes, tr_errs, type = 'l',lwd = 3, col = 'red', ylim = c(0.22,0.29))
+lines(tr_sizes, te_errs, type = 'l',lwd = 3, col = 'blue')
+
+
+```
+
+
+
+```{r}
+fit3 = naiveBayes(passingGrade ~ absences + Dalc + studytime+ G1 + G2,data = tr_dat)
+```
+
+```{r}
+fit3$tables$absences
+```
+
+```{r}
+predicted = predict(fit3, newdata=te_dat)
+actuals = te_dat$passingGrade
+conf_mtx = table(predicted, actuals)
+conf_mtx
+```
+```{r}
+mean(predicted == actuals)
+```
+```{r}
+te_errs = c()
+tr_errs = c()
+te_actual = te_dat$passingGrade
+tr_sizes = seq(100, nrow(tr_dat), length.out = 20)
+for(tr_size in tr_sizes){
+tr_dat1 = tr_dat[1:tr_size,]
+tr_actual = tr_dat1$passingGrade
+fit3 = naiveBayes(passingGrade ~ absences + Dalc + studytime + G1 + G2, data = tr_dat1)
+# error on training set
+tr_predicted = predict(fit3, tr_dat1)
+err = sum(tr_actual != tr_predicted)/length(tr_predicted)
+tr_errs = c(tr_errs, err)
+#error on test set
+te_predicted = predict(fit3, te_dat)
+err = sum(te_actual != te_predicted)/length(te_predicted)
+te_errs = c(te_errs, err)
+}
+plot(tr_sizes, tr_errs, type = 'l',lwd = 3, col = 'red', ylim = c(0,0.20))
+lines(tr_sizes, te_errs, type = 'l',lwd = 3, col = 'blue')
+
+
+```
 
 
 
