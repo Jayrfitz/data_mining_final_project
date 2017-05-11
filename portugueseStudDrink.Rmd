@@ -20,25 +20,23 @@ Paulo Cortez and Alice Silva went on to use this dataset for their study, _Using
 The data was acquired from Kaggle, a data science platform, at https://www.kaggle.com/uciml/student-alcohol-consumption. 
 
 ```{r}
-# jason
-dat = read.csv("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/student-por.csv", stringsAsFactors = T)
-# andrew
-# dat = read.csv("/Users/AndrewDiesh/Desktop/student-por.csv", stringsAsFactors = T)
-# antonio
-# dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
 library(rpart)
 library(rpart.plot)
 library(maptree)
 library(e1071)
+
 # jason
-source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
-source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
+# dat = read.csv("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/student-por.csv", stringsAsFactors = T)
+# source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
+# source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
 # andrew
+# dat = read.csv("/Users/AndrewDiesh/Desktop/student-por.csv", stringsAsFactors = T)
 # source("/Users/AndrewDiesh/Desktop/class-util.R") 
 # source("/Users/AndrewDiesh/Documents/CST\ 463/HW10/lin-regr-util.R")
 # antonio
-# source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/class-util.R")
-# source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/lin-regr-util.R")
+dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
+source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/class-util.R")
+source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/lin-regr-util.R")
 set.seed(123)
 ```
 
@@ -56,9 +54,26 @@ lbs = c(paste (names(table(dat$pieAges)), '-', round(table(dat$pieAges)/nrow(dat
 pie(ageOfStudents, labels= lbs, main = 'Student Ages')
 ```
 
-Our models will try to predict what the student's final grades will be. Here we can see what the actual final grades in our data are.
+Our models will try to predict what the student's final grades will be.
+Secondary and higher education in Portugal uses a 20-point grading scale.
+
+18-20 indicates **excellent**, it's equivalent to an A+.
+
+16-17.99 indicates **very good**, it's equivalent to an A.
+
+14-15.99 indicates **good**, it's equivalent to a B.
+
+10-13.99 indicates **sufficient**, it's equivalent to a C.
+
+7-9.99 indicates **poor**, it's equivalent to an F.
+
+1-6.99 indicates **very poor**, it's equivalent to an F.
+
+Here we'll take a look at the grade distribution for male and female students. 
 ```{r}
-hist(dat$G3, main = "Student's Final Grades", xlab = "Final Grades. (Out of 20)", col = "red4")
+par(mfrow=c(1, 2))
+hist(dat[dat$sex=="M", ]$G3, main="Male Students' Final Grades", xlab="Final Grades", col="red", ylim=c(0,100))
+hist(dat[dat$sex=="F", ]$G3, main="Female Students' Final Grades", xlab="Final Grades", col="lightblue", ylim=c(0,100))
 ```
 It's reasonable to believe that the higher number of absences a student has, the lower their final grade might be. As such, we'll take a look at the number of absences for this data. For a given number of absences, we'll see how many students were absent that number of times.
 ```{r}
