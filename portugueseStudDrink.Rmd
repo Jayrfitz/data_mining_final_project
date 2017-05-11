@@ -84,7 +84,7 @@ fit = rpart(G3 ~ studytime + freetime + goout + absences + Dalc + Walc + activit
 
 ```{r}
 par(mar = c(3, 15, 3, 3))
-barplot(fit$variable.importance, main = "Variable Importance Plot", horiz = TRUE, las = 1)
+barplot(fit$variable.importance, main = "Variable Importance Plot", horiz = TRUE, las = 1, col = 'red4')
 ```
 
 ```{r}
@@ -160,15 +160,41 @@ mean(actual == predicted)
 ```
 
 ```{r}
-fit = naiveBayes(school ~ reason + address + guardian,data = tr_dat)
+te_errs = c()
+tr_errs = c()
+te_actual = te_dat$passingGrade
+tr_sizes = seq(100, nrow(tr_dat), length.out = 20)
+for(tr_size in tr_sizes){
+  tr_dat1 = tr_dat[1:tr_size,]
+  tr_actual = tr_dat1$school
+  tr_dat1$passingGrade = factor(ifelse(tr_dat1$G3 >= 12, "Pass", "Fail"))
+  fit = rpart(passingGrade ~ absences + studytime, data = tr_dat1, method = "class")
+  # fit = naiveBayes(school ~ reason + address + guardian, data = tr_dat1)
+  # error on training set
+  tr_predicted = predict(fit, tr_dat1)
+  err = sum(tr_actual != tr_predicted)/length(tr_predicted)
+  tr_errs = c(tr_errs, err)
+  #error on test set
+  te_predicted = predict(fit, te_dat)
+  err = sum(te_actual != te_predicted)/length(te_predicted)
+  te_errs = c(te_errs, err)
+}
+plot(tr_sizes, tr_errs, type = 'l',lwd = 10, col = 'red')
+lines(tr_sizes, te_errs, type = 'l',lwd = 3, col = 'blue')
+
+
 ```
 
 ```{r}
-fit$tables$reason
+fit2 = naiveBayes(school ~ reason + address + guardian,data = tr_dat)
 ```
 
 ```{r}
-predicted = predict(fit, newdata=te_dat)
+fit2$tables$reason
+```
+
+```{r}
+predicted = predict(fit2, newdata=te_dat)
 length(predicted)
 
 actuals = te_dat$school
@@ -181,7 +207,29 @@ conf_mtx
 ```{r}
 mean(predicted == actuals)
 ```
+```{r}
+te_errs = c()
+tr_errs = c()
+te_actual = te_dat$school
+tr_sizes = seq(100, nrow(tr_dat), length.out = 20)
+for(tr_size in tr_sizes){
+  tr_dat1 = tr_dat[1:tr_size,]
+  tr_actual = tr_dat1$school
+  fit2 = naiveBayes(school ~ reason + address + guardian, data = tr_dat1)
+  # error on training set
+  tr_predicted = predict(fit2, tr_dat1)
+  err = sum(tr_actual != tr_predicted)/length(tr_predicted)
+  tr_errs = c(tr_errs, err)
+  #error on test set
+  te_predicted = predict(fit2, te_dat)
+  err = sum(te_actual != te_predicted)/length(te_predicted)
+  te_errs = c(te_errs, err)
+}
+plot(tr_sizes, tr_errs, type = 'l',lwd = 3, col = 'red', ylim = c(0.2,0.29))
+lines(tr_sizes, te_errs, type = 'l',lwd = 3, col = 'blue')
 
+
+```
 
 ```{r}
 tr_dat$freetime3 = factor(ifelse(tr_dat$freetime >= 3, yes = "fTime > 3", no = 'fTime < 3'))
