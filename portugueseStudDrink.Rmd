@@ -103,8 +103,10 @@ legend("topright", c("weekend consumption", "work day consumption"), pch = 15, c
 plot(density(dat$G1*5), main = "Student's grades", col = "red4", ylim=c(0,0.035), xlab = 'grade out of 100', xlim = c(0,100),lwd = 3,)
 lines(density(dat$G2*5), col="darkgreen",lwd = 3)
 lines(density(dat$G3*5), col="blue",lwd = 3)
-legend("topleft", c("grade after 1st test","grade after 2nd test","final grade"), pch = 15,col = c("red4","darkgreen", 'blue'),
+legend("topleft", c("grade after 1st test","grade after 2nd test","final grade","dotted line passing failing"), pch = 15,col = c("red4","darkgreen", 'blue', 'white'),
 inset = .05)
+abline(v = 50, lty = 2, lwd = 1.5)
+grid()
 ```
 This density plot of three lines shows the distibution of grades for all the students. With the line red being the first test, the green line being the sceond, and blue line being the final grade. We pushed the grade from 20 points possible to 100.
 
@@ -131,10 +133,11 @@ tr_dat$passingGrade = factor(ifelse(tr_dat$G3 >= 12, "Pass", "Fail"))
 
 
 
+
 ```{r}
 
 fit = rpart(passingGrade ~ absences + studytime, data = te_dat, method = "class")
-prp(fit, extra = 106, varlen = -10, main ="classifiation for grades", box.col = c("red", "green")[fit$frame$yval])
+prp(fit, extra = 106, varlen = -10, main ="Classifiation for score over 60%", box.col = c("red", "green")[fit$frame$yval])
 
 
 ```
@@ -164,24 +167,24 @@ mean(actual == predicted)
 te_errs = c()
 tr_errs = c()
 te_actual = te_dat$passingGrade
-tr_sizes = seq(100, nrow(tr_dat), length.out = 20)
+tr_sizes = seq(0, nrow(tr_dat), length.out = 20)
 for(tr_size in tr_sizes){
   tr_dat1 = tr_dat[1:tr_size,]
   tr_actual = tr_dat1$passingGrade
-  tr_dat1$passingGrade = factor(ifelse(tr_dat1$G3 >= 12, "Pass", "Fail"))
+  # tr_dat1$passingGrade = factor(ifelse(tr_dat1$G3 >= 12, "Pass", "Fail"))
   fit = rpart(passingGrade ~ absences + studytime, data = tr_dat1, method = "class")
   # fit = naiveBayes(school ~ reason + address + guardian, data = tr_dat1)
   # error on training set
-  tr_predicted = predict(fit, tr_dat1)
+  tr_predicted = predict(fit, tr_dat1, type = 'class')
   err = sum(tr_actual != tr_predicted)/length(tr_predicted)
   tr_errs = c(tr_errs, err)
   #error on test set
-  te_predicted = predict(fit, te_dat)
+  te_predicted = predict(fit, te_dat, type = 'class')
   err = sum(te_actual != te_predicted)/length(te_predicted)
   te_errs = c(te_errs, err)
 }
-plot(tr_sizes, tr_errs, type = 'l',lwd = 10, col = 'red')
-lines(tr_sizes, te_errs, type = 'l',lwd = 3, col = 'blue')
+plot(tr_sizes, tr_errs, type = 'b',lwd = 3, col = 'red',ylim = c(0,0.5))
+lines(tr_sizes, te_errs, type = 'b',lwd = 3, col = 'blue')
 
 
 ```
@@ -232,7 +235,7 @@ mean(predicted == actuals)
 te_errs = c()
 tr_errs = c()
 te_actual = te_dat$school
-tr_sizes = seq(100, nrow(tr_dat), length.out = 20)
+tr_sizes = seq(0, nrow(tr_dat)/2, length.out = 10)
 for(tr_size in tr_sizes){
   tr_dat1 = tr_dat[1:tr_size,]
   tr_actual = tr_dat1$school
@@ -246,8 +249,8 @@ for(tr_size in tr_sizes){
   err = sum(te_actual != te_predicted)/length(te_predicted)
   te_errs = c(te_errs, err)
 }
-plot(tr_sizes, tr_errs, type = 'l',lwd = 3, col = 'red', ylim = c(0.22,0.29))
-lines(tr_sizes, te_errs, type = 'l',lwd = 3, col = 'blue')
+plot(tr_sizes, tr_errs, type = 'b',lwd = 3, col = 'red', ylim = c(0,0.5))
+lines(tr_sizes, te_errs, type = 'b',lwd = 3, col = 'blue')
 
 
 ```
@@ -255,7 +258,7 @@ lines(tr_sizes, te_errs, type = 'l',lwd = 3, col = 'blue')
 
 
 ```{r}
-fit3 = naiveBayes(passingGrade ~ absences + Dalc + studytime+ G1 + G2,data = tr_dat)
+fit3 = naiveBayes(passingGrade ~ Dalc + studytime+ G1,data = tr_dat)
 ```
 
 ```{r}
@@ -275,11 +278,11 @@ mean(predicted == actuals)
 te_errs = c()
 tr_errs = c()
 te_actual = te_dat$passingGrade
-tr_sizes = seq(100, nrow(tr_dat), length.out = 20)
+tr_sizes = seq(0, nrow(tr_dat)/3, length.out = 20)
 for(tr_size in tr_sizes){
   tr_dat1 = tr_dat[1:tr_size,]
   tr_actual = tr_dat1$passingGrade
-  fit3 = naiveBayes(passingGrade ~ absences + Dalc + studytime + G1 + G2, data = tr_dat1)
+  fit3 = naiveBayes(passingGrade ~ Dalc + studytime + G1, data = tr_dat1)
   # error on training set
   tr_predicted = predict(fit3, tr_dat1)
   err = sum(tr_actual != tr_predicted)/length(tr_predicted)
@@ -289,8 +292,8 @@ for(tr_size in tr_sizes){
   err = sum(te_actual != te_predicted)/length(te_predicted)
   te_errs = c(te_errs, err)
 }
-plot(tr_sizes, tr_errs, type = 'l',lwd = 3, col = 'red', ylim = c(0,0.20))
-lines(tr_sizes, te_errs, type = 'l',lwd = 3, col = 'blue')
+plot(tr_sizes, tr_errs, type = 'b',lwd = 3, col = 'red', ylim = c(0,0.25))
+lines(tr_sizes, te_errs, type = 'b',lwd = 3, col = 'blue')
 
 
 ```
