@@ -10,9 +10,7 @@ knitr::opts_chunk$set(prompt=TRUE, comment="", echo=TRUE)
 ```
 
 ###**Objective**
-Given the tools and techniques learned throughout the past four months we want to use these to analyze a dataset of our choosing and answer some question using prediction models. We decided to work with the student alcohol consumption dataset, which focuses on alcohol consumption in Portugal. This data set was gathered during the 2005-2006 school year from a survey of students in a Portuguese language course from the Alentejo region of Portugal. 
-Paulo Cortez and Alice Silva went on to use this dataset for their study, _Using Data Mining to Predict Secondary School Student Performance_.
-The data was acquired from Kaggle, a data science platform, at https://www.kaggle.com/uciml/student-alcohol-consumption. 
+Given the tools and techniques learned throughout the past four months we want to use these to analyze a dataset of our choosing and answer some question using prediction models. We decided to work with the student alcohol consumption dataset, which focuses on alcohol consumption in Portugal. This data set was gathered during the 2005-2006 school year from a survey of students in a Portuguese language course from the Alentejo region of Portugal.Paulo Cortez and Alice Silva went on to use this dataset for their study, _Using Data Mining to Predict Secondary School Student Performance_. A questions we as a group are trying to explore is can we determine a passing grade for a student based off the amount of alcohol they consume on workdays and weekends, amount of absenses, and the other factors.The data was acquired from Kaggle, a data science platform, at https://www.kaggle.com/uciml/student-alcohol-consumption. 
 
 
 actually contained thirty different features to work with. Because of this we decided to pursue our project with this data.
@@ -76,6 +74,14 @@ hist(dat[dat$sex=="M", ]$G3, main="Male Students' Final Grades", xlab="Final Gra
 hist(dat[dat$sex=="F", ]$G3, main="Female Students' Final Grades", xlab="Final Grades", col="lightblue", ylim=c(0,100))
 ```
 It's reasonable to believe that the higher number of absences a student has, the lower their final grade might be. As such, we'll take a look at the number of absences for this data. For a given number of absences, we'll see how many students were absent that number of times.
+
+
+```{r}
+hist(dat$Dalc[dat$sex == "F"], col = "red4", main = "Workday Alcohol Consumption by Sex (Female)", xlab = "Alcohol Consumption (Scale of 1-5)")
+hist(dat$Dalc[dat$sex == "M"], col = "red4", main = "Workday Alcohol Consumption by Sex (Male)", xlab = "Alcohol Consumption (Scale of 1-5)")
+
+```
+
 ```{r}
 par(mar=c(3, 10, 3, 3))
 barplot(sort(table(dat$absences), decreasing=FALSE), horiz=TRUE, las=1, main="Frequency", col="firebrick", ylab="Number of Absences", xlim=c(0, 250))
@@ -200,7 +206,7 @@ for(tr_size in tr_sizes){
 }
 plot(tr_sizes, tr_errs, type = 'b',lwd = 3, col = 'red',ylim = c(0,0.5))
 lines(tr_sizes, te_errs, type = 'b',lwd = 3, col = 'blue')
-legend("bottomright", c("testing data", "training data"), pch = 15, col = c("red", "blue"), inset = 0.05)
+legend("bottomright", c("training data", "testing data"), pch = 15, col = c("red", "blue"), inset = 0.05)
 
 
 ```
@@ -267,8 +273,7 @@ for(tr_size in tr_sizes){
 }
 plot(tr_sizes, tr_errs, type = 'b',lwd = 3, col = 'red', ylim = c(0,0.5))
 lines(tr_sizes, te_errs, type = 'b',lwd = 3, col = 'blue')
-legend("bottomright", c("testing data", "training data"), pch = 15, col = c("red", "blue"), inset = 0.05)
-
+legend("bottomright", c("training data", "testing data"), pch = 15, col = c("red", "blue"), inset = 0.05)
 ```
 
 
@@ -311,7 +316,7 @@ for(tr_size in tr_sizes){
 plot(tr_sizes, tr_errs, type = 'b',lwd = 3, col = 'red', ylim = c(0,0.25))
 lines(tr_sizes, te_errs, type = 'b',lwd = 3, col = 'blue')
 
-legend("bottomright", c("testing data", "training data"), pch = 15, col = c("red", "blue"), inset = 0.05)
+legend("bottomright", c("training data", "testing data"), pch = 15, col = c("red", "blue"), inset = 0.05)
 
 ```
 
