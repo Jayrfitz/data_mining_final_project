@@ -73,12 +73,17 @@ par(mfrow=c(1, 2))
 hist(dat[dat$sex=="M", ]$G3, main="Male Students' Final Grades", xlab="Final Grades", col="red", ylim=c(0,100))
 hist(dat[dat$sex=="F", ]$G3, main="Female Students' Final Grades", xlab="Final Grades", col="lightblue", ylim=c(0,100))
 ```
+
+
 It's reasonable to believe that the higher number of absences a student has, the lower their final grade might be. As such, we'll take a look at the number of absences for this data. For a given number of absences, we'll see how many students were absent that number of times.
 
 
+### Workday alcohol consumption
+
 ```{r}
-hist(dat$Dalc[dat$sex == "F"], col = "red4", main = "Workday Alcohol Consumption by Sex (Female)", xlab = "Alcohol Consumption (Scale of 1-5)")
-hist(dat$Dalc[dat$sex == "M"], col = "red4", main = "Workday Alcohol Consumption by Sex (Male)", xlab = "Alcohol Consumption (Scale of 1-5)")
+par(mfrow=c(1, 2))
+hist(dat$Dalc[dat$sex == "F"], col = "red4", main = "Female", xlab = "Alcohol Consumption (Scale of 1-5)")
+hist(dat$Dalc[dat$sex == "M"], col = "red4", main = "Male", xlab = "Alcohol Consumption (Scale of 1-5)")
 
 ```
 
@@ -89,28 +94,6 @@ grid(nx=25, ny=0, col="black")
 ```
 
 
-
-
-
-
-
-
-
-Our model has some significant predictor variables used to predict a student's final grade earned for the course taken. Below, we can see some of these variables that can effect the final grade negatively.  
-
-
-```{r}
-fit = rpart(G3 ~ studytime + freetime + goout + absences + Dalc + Walc + activities,  data=dat, method="class")
-```
-
-
-
-```{r}
-par(mar = c(3, 15, 3, 3))
-barplot(fit$variable.importance, main = "Variable Importance Plot", horiz = TRUE, las = 1, col = 'red4')
-```
-
-As we can see, Dalc (workday alcohol consumption) and absenses are the most detrimental for a student's final grade for the course. 
 
 ```{r}
 plot(density(dat$Walc), main = "Density Plot on Student Workday/Weekend Alcohol Consumption", col = "red4", xlim = c(0, 5), ylim = c(0, 2), xlab = "Scale of 1-5", lwd = 3) # red4: weekend
@@ -129,7 +112,27 @@ inset = .05)
 abline(v = 50, lty = 2, lwd = 1.5)
 grid()
 ```
+
+
 This density plot of three lines shows the distibution of grades for all the students. With the line red being the first test, the green line being the sceond, and blue line being the final grade. We pushed the grade from 20 points possible to 100.
+
+
+
+Our model has some significant predictor variables used to predict a student's final grade earned for the course taken. Below, we can see some of these variables that can effect the final grade negatively.  
+
+
+```{r}
+fit = rpart(G3 ~ studytime + freetime + goout + absences + Dalc + Walc + activities,  data=dat, method="class")
+```
+
+
+```{r}
+par(mar = c(3, 6, 3, 3))
+barplot(fit$variable.importance, main = "Variable Importance Plot", horiz = TRUE, las = 1, col = 'red4')
+```
+
+As we can see, Dalc (workday alcohol consumption) and absenses are the most detrimental for a student's final grade for the course. 
+
 
 ```{r}
 split = split_data(dat)
