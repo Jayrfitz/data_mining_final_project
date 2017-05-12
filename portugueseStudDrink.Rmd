@@ -22,13 +22,13 @@ library(maptree)
 library(e1071)
 
 # jason
-# dat = read.csv("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/student-por.csv", stringsAsFactors = T)
-# source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
-# source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
+dat = read.csv("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/student-por.csv", stringsAsFactors = T)
+source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
+source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
 # andrew
-dat = read.csv("/Users/AndrewDiesh/Desktop/student-por.csv", stringsAsFactors = T)
-source("/Users/AndrewDiesh/Desktop/class-util.R") 
-source("/Users/AndrewDiesh/Documents/CST\ 463/HW10/lin-regr-util.R")
+# dat = read.csv("/Users/AndrewDiesh/Desktop/student-por.csv", stringsAsFactors = T)
+# source("/Users/AndrewDiesh/Desktop/class-util.R") 
+# source("/Users/AndrewDiesh/Documents/CST\ 463/HW10/lin-regr-util.R")
 # antonio
 # dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
 # source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/class-util.R")
@@ -242,7 +242,7 @@ legend("bottomright", c("training data", "testing data"), pch = 15, col = c("red
 
 ```
 
-Our learning curve has a high bias
+Our learning curve has a high bias and  
 
 ```{r}
 tr_dat$freetime3 = factor(ifelse(tr_dat$freetime >= 3, yes = "fTime > 3", no = 'fTime < 3'))
@@ -263,14 +263,14 @@ conf_mtx
 succ_rate = mean(predicted == actuals)
 round(succ_rate, 3)
 ```
-
-
-
+```{r}
+str(dat)
+```
 
 
 
 ```{r}
-fit2 = naiveBayes(school ~ reason + address + guardian,data = tr_dat)
+fit2 = naiveBayes(passingGrade ~ G1 + G2 + reason + address ,data = tr_dat)
 ```
 
 ```{r}
@@ -279,7 +279,7 @@ fit2$tables$reason
 
 ```{r}
 predicted = predict(fit2, newdata=te_dat)
-actuals = te_dat$school
+actuals = te_dat$passingGrade
 conf_mtx = table(predicted, actuals)
 conf_mtx
 ```
@@ -289,12 +289,12 @@ mean(predicted == actuals)
 ```{r}
 te_errs = c()
 tr_errs = c()
-te_actual = te_dat$school
-tr_sizes = seq(0, nrow(tr_dat)/2, length.out = 10)
+te_actual = te_dat$passingGrade
+tr_sizes = seq(0, nrow(tr_dat), length.out = 20)
 for(tr_size in tr_sizes){
   tr_dat1 = tr_dat[1:tr_size,]
-  tr_actual = tr_dat1$school
-  fit2 = naiveBayes(school ~ reason + address + guardian, data = tr_dat1)
+  tr_actual = tr_dat1$passingGrade
+  fit2 = naiveBayes(passingGrade ~ G1 + G2 + reason + address, data = tr_dat1)
   # error on training set
   tr_predicted = predict(fit2, tr_dat1)
   err = sum(tr_actual != tr_predicted)/length(tr_predicted)
@@ -306,17 +306,17 @@ for(tr_size in tr_sizes){
 }
 plot(tr_sizes, tr_errs, type = 'b',lwd = 3, col = 'red', ylim = c(0,0.5))
 lines(tr_sizes, te_errs, type = 'b',lwd = 3, col = 'blue')
-legend("bottomright", c("training data", "testing data"), pch = 15, col = c("red", "blue"), inset = 0.05)
+legend("topright", c("training data", "testing data"), pch = 15, col = c("red", "blue"), inset = 0.05)
 ```
 
 
 
 ```{r}
-fit3 = naiveBayes(passingGrade ~ Dalc + studytime+ G1,data = tr_dat)
+fit3 = naiveBayes(passingGrade ~G1 + G2 + reason + address + guardian + Fjob + Mjob + Fedu +Medu + absences + paid + traveltime,data = tr_dat)
 ```
 
 ```{r}
-fit3$tables$Dalc
+fit3$tables$G1
 ```
 
 ```{r}
@@ -336,7 +336,7 @@ tr_sizes = seq(0, nrow(tr_dat)/3, length.out = 20)
 for(tr_size in tr_sizes){
   tr_dat1 = tr_dat[1:tr_size,]
   tr_actual = tr_dat1$passingGrade
-  fit3 = naiveBayes(passingGrade ~ Dalc + studytime + G1, data = tr_dat1)
+  fit3 = naiveBayes(passingGrade ~ G1 + G2 + reason + address + guardian + Fjob + Mjob + Fedu +Medu + absences + paid + traveltime, data = tr_dat1)
   # error on training set
   tr_predicted = predict(fit3, tr_dat1)
   err = sum(tr_actual != tr_predicted)/length(tr_predicted)
@@ -346,12 +346,13 @@ for(tr_size in tr_sizes){
   err = sum(te_actual != te_predicted)/length(te_predicted)
   te_errs = c(te_errs, err)
 }
-plot(tr_sizes, tr_errs, type = 'b',lwd = 3, col = 'red', ylim = c(0,0.25))
+plot(tr_sizes, tr_errs, type = 'b',lwd = 3, col = 'red', ylim = c(0,0.50))
 lines(tr_sizes, te_errs, type = 'b',lwd = 3, col = 'blue')
 
-legend("bottomright", c("training data", "testing data"), pch = 15, col = c("red", "blue"), inset = 0.05)
+legend("topright", c("training data", "testing data"), pch = 15, col = c("red", "blue"), inset = 0.05)
 
 ```
+
 
 
 
