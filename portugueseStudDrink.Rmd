@@ -23,13 +23,13 @@ library(e1071)
 # source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
 # source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
 # andrew
-# dat = read.csv("/Users/AndrewDiesh/Desktop/student-por.csv", stringsAsFactors = T)
-# source("/Users/AndrewDiesh/Desktop/class-util.R") 
-# source("/Users/AndrewDiesh/Documents/CST\ 463/HW10/lin-regr-util.R")
+dat = read.csv("/Users/AndrewDiesh/Desktop/student-por.csv", stringsAsFactors = T)
+source("/Users/AndrewDiesh/Desktop/class-util.R") 
+source("/Users/AndrewDiesh/Documents/CST\ 463/HW10/lin-regr-util.R")
 # antonio
-dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
-source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/class-util.R")
-source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/lin-regr-util.R")
+#dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
+# source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/class-util.R")
+# source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/lin-regr-util.R")
 set.seed(123)
 ```
 
@@ -113,7 +113,7 @@ hist(dat$Dalc[dat$sex == "M"], col = "red4", main = "Male", xlab = "Alcohol Cons
 
 ```
 
-From the data, we see that there are more girls who consume alcohol at a level 1. Something we must remember is there are more girlsas opposed to males in the class, which may not be a full representation of how males drink their alcohol. 
+From the data, we see that there are more girls who consume an alcoholic beverage one day of the week. Something we must remember is there are more girls as opposed to males in the class, which may not be a full representation of how males drink their alcohol. 
 
 ```{r}
 plot(density(dat$Walc), main = "Density Plot on Student Workday/Weekend Alcohol Consumption", col = "red4", xlim = c(0, 5), ylim = c(0, 2), xlab = "Scale of 1-5", lwd = 3) # red4: weekend
@@ -239,7 +239,8 @@ legend("bottomright", c("training data", "testing data"), pch = 15, col = c("red
 
 ```
 
-Our learning curve has a high bias and  
+Our learning curve has a high bias since our test data error flatens out quickly, while the training data's curve is established immediately. Our graph has underfitting due to a lack of data and features, which do not fit our data well enough. 
+
 
 ```{r}
 tr_dat$freetime3 = factor(ifelse(tr_dat$freetime >= 3, yes = "fTime > 3", no = 'fTime < 3'))
