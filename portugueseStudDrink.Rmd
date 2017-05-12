@@ -10,10 +10,7 @@ knitr::opts_chunk$set(prompt=TRUE, comment="", echo=TRUE)
 ```
 
 ###**Objective**
-Given the tools and techniques learned throughout the past four months, we want to use these to analyze a dataset of our choosing and answer some questions using prediction models. We decided to work with the student alcohol consumption dataset, which focuses on alcohol consumption in Portugal. This data set was gathered during the 2005-2006 school year from a survey of students in a Portuguese language course from the Alentejo region of Portugal.Paulo Cortez and Alice Silva went on to use this dataset for their study, _Using Data Mining to Predict Secondary School Student Performance_. A questions we as a group are trying to explore is can we determine a passing grade for a student based off the amount of alcohol they consume on workdays and weekends, amount of absenses, and the other factors.The data was acquired from Kaggle, a data science platform, at https://www.kaggle.com/uciml/student-alcohol-consumption. 
-
-
-
+Given the tools and techniques learned throughout the past four months, we want to use these to analyze a dataset of our choosing and answer some questions using prediction models. We decided to work with the student alcohol consumption dataset, which focuses on alcohol consumption in Portugal. This data set was gathered during the 2005-2006 school year from a survey of students in a Portuguese language course from the Alentejo region of Portugal.Paulo Cortez and Alice Silva went on to use this dataset for their study, _Using Data Mining to Predict Secondary School Student Performance_. We want to predict whether students passed or failed based on the features gatheres in this data set. The data was acquired from Kaggle, a data science platform, at https://www.kaggle.com/uciml/student-alcohol-consumption. 
 
 ```{r}
 library(rpart)
@@ -22,17 +19,17 @@ library(maptree)
 library(e1071)
 
 # jason
-dat = read.csv("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/student-por.csv", stringsAsFactors = T)
-source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
-source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
+# dat = read.csv("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/student-por.csv", stringsAsFactors = T)
+# source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
+# source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
 # andrew
 # dat = read.csv("/Users/AndrewDiesh/Desktop/student-por.csv", stringsAsFactors = T)
 # source("/Users/AndrewDiesh/Desktop/class-util.R") 
 # source("/Users/AndrewDiesh/Documents/CST\ 463/HW10/lin-regr-util.R")
 # antonio
-# dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
-# source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/class-util.R")
-# source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/lin-regr-util.R")
+dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
+source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/class-util.R")
+source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/lin-regr-util.R")
 set.seed(123)
 ```
 
@@ -349,6 +346,12 @@ lines(tr_sizes, te_errs, type = 'b',lwd = 3, col = 'blue')
 legend("topright", c("training data", "testing data"), pch = 15, col = c("red", "blue"), inset = 0.05)
 
 ```
+
+###**Conclusion**
+The first challenge we encountered came up before we even imported the data. The data set had only surveyed about 900 students across two different classes. This amount of data is nowhere near enough what is recommended for a project like this. After looking at the data we did have we had to discard about 300 lines due to the same students being represented across both classes, we would have a large percentage of duplicates.
+
+As soon as we started building models we immediately used linear modeling since it was the first one we learned. However, because the majority of our data features were categorical, this wouldn't work well with linear modeling. After a short conversation with the professor we pursued using classification trees for our modeling.
+
 
 
 
