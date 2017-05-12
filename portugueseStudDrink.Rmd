@@ -263,18 +263,15 @@ conf_mtx
 succ_rate = mean(predicted == actuals)
 round(succ_rate, 3)
 ```
-```{r}
-str(dat)
-```
 
 
 
 ```{r}
-fit2 = naiveBayes(passingGrade ~ G1 + G2 + reason + address ,data = tr_dat)
+fit2 = naiveBayes(passingGrade ~ G1 + G2,data = tr_dat)
 ```
 
 ```{r}
-fit2$tables$reason
+fit2$tables$G1
 ```
 
 ```{r}
@@ -290,11 +287,11 @@ mean(predicted == actuals)
 te_errs = c()
 tr_errs = c()
 te_actual = te_dat$passingGrade
-tr_sizes = seq(0, nrow(tr_dat), length.out = 20)
+tr_sizes = seq(0, nrow(tr_dat)/4, length.out = 15)
 for(tr_size in tr_sizes){
   tr_dat1 = tr_dat[1:tr_size,]
   tr_actual = tr_dat1$passingGrade
-  fit2 = naiveBayes(passingGrade ~ G1 + G2 + reason + address, data = tr_dat1)
+  fit2 = naiveBayes(passingGrade ~  G1 + G2, data = tr_dat1)
   # error on training set
   tr_predicted = predict(fit2, tr_dat1)
   err = sum(tr_actual != tr_predicted)/length(tr_predicted)
@@ -304,7 +301,7 @@ for(tr_size in tr_sizes){
   err = sum(te_actual != te_predicted)/length(te_predicted)
   te_errs = c(te_errs, err)
 }
-plot(tr_sizes, tr_errs, type = 'b',lwd = 3, col = 'red', ylim = c(0,0.5))
+plot(tr_sizes, tr_errs, type = 'b',lwd = 3, col = 'red', ylim = c(0,0.35))
 lines(tr_sizes, te_errs, type = 'b',lwd = 3, col = 'blue')
 legend("topright", c("training data", "testing data"), pch = 15, col = c("red", "blue"), inset = 0.05)
 ```
@@ -332,7 +329,7 @@ mean(predicted == actuals)
 te_errs = c()
 tr_errs = c()
 te_actual = te_dat$passingGrade
-tr_sizes = seq(0, nrow(tr_dat)/3, length.out = 20)
+tr_sizes = seq(0, nrow(tr_dat)/4, length.out = 15)
 for(tr_size in tr_sizes){
   tr_dat1 = tr_dat[1:tr_size,]
   tr_actual = tr_dat1$passingGrade
@@ -346,7 +343,7 @@ for(tr_size in tr_sizes){
   err = sum(te_actual != te_predicted)/length(te_predicted)
   te_errs = c(te_errs, err)
 }
-plot(tr_sizes, tr_errs, type = 'b',lwd = 3, col = 'red', ylim = c(0,0.50))
+plot(tr_sizes, tr_errs, type = 'b',lwd = 3, col = 'red', ylim = c(0,0.35))
 lines(tr_sizes, te_errs, type = 'b',lwd = 3, col = 'blue')
 
 legend("topright", c("training data", "testing data"), pch = 15, col = c("red", "blue"), inset = 0.05)
