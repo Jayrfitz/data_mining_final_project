@@ -10,10 +10,8 @@ knitr::opts_chunk$set(prompt=TRUE, comment="", echo=TRUE)
 ```
 
 ###**Objective**
-Given the tools and techniques learned throughout the past four months we want to use these to analyze a dataset of our choosing and answer some question using prediction models. We decided to work with the student alcohol consumption dataset, which focuses on alcohol consumption in Portugal. This data set was gathered during the 2005-2006 school year from a survey of students in a Portuguese language course from the Alentejo region of Portugal.Paulo Cortez and Alice Silva went on to use this dataset for their study, _Using Data Mining to Predict Secondary School Student Performance_. A questions we as a group are trying to explore is can we determine a passing grade for a student based off the amount of alcohol they consume on workdays and weekends, amount of absenses, and the other factors.The data was acquired from Kaggle, a data science platform, at https://www.kaggle.com/uciml/student-alcohol-consumption. 
+Given the tools and techniques learned throughout the past four months, we want to use these to analyze a dataset of our choosing and answer some questions using prediction models. We decided to work with the student alcohol consumption dataset, which focuses on alcohol consumption in Portugal. This data set was gathered during the 2005-2006 school year from a survey of students in a Portuguese language course from the Alentejo region of Portugal.Paulo Cortez and Alice Silva went on to use this dataset for their study, _Using Data Mining to Predict Secondary School Student Performance_. A questions we as a group are trying to explore is can we determine a passing grade for a student based off the amount of alcohol they consume on workdays and weekends, amount of absenses, and the other factors.The data was acquired from Kaggle, a data science platform, at https://www.kaggle.com/uciml/student-alcohol-consumption. 
 
-
-actually contained thirty different features to work with. Because of this we decided to pursue our project with this data.
 
 
 
@@ -40,9 +38,9 @@ set.seed(123)
 
 
 ###**Data Exploration**
-Now that we have our data we'll take a look at a few plots to see what data we're working with.
+Now that we have our data, we'll take a look at a few plots to see what data we're working with.
 
-Our data revolves around secondary school students, therefore it would be useful to take a look at what ages are represented.
+Our data revolves around secondary school students; therefore, it would be useful to take a look at what ages are represented.
 ```{r}
 dat$pieAges = ifelse(dat$age >= 20, '+20', dat$age)
 ageOfStudents= table(dat$pieAges)
@@ -51,6 +49,18 @@ lbs = c(paste (names(table(dat$pieAges)), '-', round(table(dat$pieAges)/nrow(dat
 
 pie(ageOfStudents, labels= lbs, main = 'Student Ages')
 ```
+
+Now that we have an understanding of the different age groups in the class, we would like to explore how many males and females are enrolled in the course. 
+
+
+```{r}
+
+table(dat$sex)
+plot(dat$sex, main = "Student's Gender", col = "red4", ylim = c(0, 400))
+
+```
+
+We can see that there are more girls (383) taking the class than males (266). 
 
 Our models will try to predict what the student's final grades will be.
 Secondary and higher education in Portugal uses a 20-point grading scale.
@@ -68,6 +78,7 @@ Secondary and higher education in Portugal uses a 20-point grading scale.
 1-6.99 indicates **very poor**, it's equivalent to an F.
 
 Here we'll take a look at the grade distribution for male and female students. 
+
 ```{r}
 par(mfrow=c(1, 2))
 hist(dat[dat$sex=="M", ]$G3, main="Male Students' Final Grades", xlab="Final Grades", col="red", ylim=c(0,100))
@@ -75,50 +86,10 @@ hist(dat[dat$sex=="F", ]$G3, main="Female Students' Final Grades", xlab="Final G
 ```
 
 
-It's reasonable to believe that the higher number of absences a student has, the lower their final grade might be. As such, we'll take a look at the number of absences for this data. For a given number of absences, we'll see how many students were absent that number of times.
 
+### Variable Importance
 
-### Workday alcohol consumption
-
-```{r}
-par(mfrow=c(1, 2))
-hist(dat$Dalc[dat$sex == "F"], col = "red4", main = "Female", xlab = "Alcohol Consumption (Scale of 1-5)")
-hist(dat$Dalc[dat$sex == "M"], col = "red4", main = "Male", xlab = "Alcohol Consumption (Scale of 1-5)")
-
-```
-
-```{r}
-par(mar=c(3, 10, 3, 3))
-barplot(sort(table(dat$absences), decreasing=FALSE), horiz=TRUE, las=1, main="Frequency", col="firebrick", ylab="Number of Absences", xlim=c(0, 250))
-grid(nx=25, ny=0, col="black")
-```
-
-
-
-```{r}
-plot(density(dat$Walc), main = "Density Plot on Student Workday/Weekend Alcohol Consumption", col = "red4", xlim = c(0, 5), ylim = c(0, 2), xlab = "Scale of 1-5", lwd = 3) # red4: weekend
-lines(density(dat$Dalc), col = "blue", lwd = 3) # blue: work dat 
-legend("topright", c("weekend consumption", "work day consumption"), pch = 15, col = c("red4", "blue"), inset = 0.05)
-
-
-```
-
-```{r}
-plot(density(dat$G1*5), main = "Student's grades", col = "red4", ylim=c(0,0.035), xlab = 'grade out of 100', xlim = c(0,100),lwd = 3,)
-lines(density(dat$G2*5), col="darkgreen",lwd = 3)
-lines(density(dat$G3*5), col="blue",lwd = 3)
-legend("topleft", c("grade after 1st test","grade after 2nd test","final grade","dotted line passing failing"), pch = 15,col = c("red4","darkgreen", 'blue', 'white'),
-inset = .05)
-abline(v = 50, lty = 2, lwd = 1.5)
-grid()
-```
-
-
-This density plot of three lines shows the distibution of grades for all the students. With the line red being the first test, the green line being the sceond, and blue line being the final grade. We pushed the grade from 20 points possible to 100.
-
-
-
-Our model has some significant predictor variables used to predict a student's final grade earned for the course taken. Below, we can see some of these variables that can effect the final grade negatively.  
+The purpose of our report is to understand reasons why students are not passing their course. Our model has some significant predictor variables used to predict a student's final grade earned for the course taken. Below, we can see some of these variables that can effect the final grade negatively.  
 
 
 ```{r}
@@ -132,6 +103,59 @@ barplot(fit$variable.importance, main = "Variable Importance Plot", horiz = TRUE
 ```
 
 As we can see, Dalc (workday alcohol consumption) and absenses are the most detrimental for a student's final grade for the course. 
+
+
+### Workday alcohol consumption
+
+Since we know that workday alcohol consumption plays such a significant impact on a student's grade, we thought it would be best to explore this to gain an understanding of how students consume their alcohol. 
+
+```{r}
+par(mfrow=c(1, 2))
+hist(dat$Dalc[dat$sex == "F"], col = "red4", main = "Female", xlab = "Alcohol Consumption (Scale of 1-5)", ylim = c(0, 300))
+hist(dat$Dalc[dat$sex == "M"], col = "red4", main = "Male", xlab = "Alcohol Consumption (Scale of 1-5)", ylim = c(0, 300))
+
+```
+
+From the data, we see that there are more girls who consume alcohol at a level 1. Something we must remember is there are more girlsas opposed to males in the class, which may not be a full representation of how males drink their alcohol. 
+
+```{r}
+plot(density(dat$Walc), main = "Density Plot on Student Workday/Weekend Alcohol Consumption", col = "red4", xlim = c(0, 5), ylim = c(0, 2), xlab = "Scale of 1-5", lwd = 3) # red4: weekend
+lines(density(dat$Dalc), col = "blue", lwd = 3) # blue: work day 
+legend("topright", c("weekend consumption", "work day consumption"), pch = 15, col = c("red4", "blue"), inset = 0.05)
+
+
+```
+
+The density plot has two lines, one for weekend alcohol consumption, and another for work day consumption. We can conclude from our data that more students partake in consuming alcoholic beverages during a work day.
+
+
+It's reasonable to believe that the higher number of absences a student has, the lower their final grade might be. As such, we'll take a look at the number of absences for this data. For a given number of absences, we'll see how many students were absent that number of times.
+
+
+```{r}
+par(mar=c(3, 10, 3, 3))
+barplot(sort(table(dat$absences), decreasing=FALSE), horiz=TRUE, las=1, main="Frequency", col="firebrick", ylab="Number of Absences", xlim=c(0, 250))
+grid(nx=25, ny=0, col="black")
+```
+
+
+
+```{r}
+plot(density(dat$G1*5), main = "Student's grades", col = "red4", ylim=c(0,0.035), xlab = 'grade out of 100', xlim = c(0,100),lwd = 3,)
+lines(density(dat$G2*5), col="darkgreen",lwd = 3)
+lines(density(dat$G3*5), col="blue",lwd = 3)
+legend("topleft", c("grade after 1st test","grade after 2nd test","final grade","dotted line passing failing"), pch = 15,col = c("red4","darkgreen", 'blue', 'white'),
+inset = .05)
+abline(v = 50, lty = 2, lwd = 1.5)
+grid()
+```
+
+
+This density plot of three lines shows the distibution of grades for all the students. With the line red being the first test, the green line being the sceond, and blue line being the final grade. We pushed the grade from 20 points possible to 100. We can conclude that the average grade for students is around 12 out of 20 points (60%), which resembles a bell curve. 
+
+
+
+# Splitting the data
 
 
 ```{r}
@@ -149,6 +173,8 @@ str(dat)
 summary(dat)
 ```
 
+From above, we can see the average grade would be around 12. 
+
 ```{r}
 
 te_dat$passingGrade = factor(ifelse(te_dat$G3 >= 12, "Pass", "Fail"))
@@ -160,13 +186,14 @@ tr_dat$passingGrade = factor(ifelse(tr_dat$G3 >= 12, "Pass", "Fail"))
 
 ```{r}
 
-fit = rpart(passingGrade ~ absences + studytime, data = te_dat, method = "class")
+fit = rpart(passingGrade ~ absences + studytime + Dalc, data = te_dat, method = "class")
 prp(fit, extra = 106, varlen = -10, main ="Classifiation for score over 60%", box.col = c("red", "green")[fit$frame$yval])
 
 
 ```
 
 
+Through the tree above, we can see students who choose to study more than 2.5 hours should pass this course. Students who do not commit the study time or have more absenses increases the chance of not passing the class. This of course plays a significant role in a student's academic success for their class. 
 
 
 
@@ -180,6 +207,7 @@ confusionMatrix
 
 ```
 
+Our success rate.
 
 ```{r}
 
@@ -196,7 +224,7 @@ for(tr_size in tr_sizes){
   tr_dat1 = tr_dat[1:tr_size,]
   tr_actual = tr_dat1$passingGrade
   # tr_dat1$passingGrade = factor(ifelse(tr_dat1$G3 >= 12, "Pass", "Fail"))
-  fit = rpart(passingGrade ~ absences + studytime, data = tr_dat1, method = "class")
+  fit = rpart(passingGrade ~ absences + studytime + Dalc, data = tr_dat1, method = "class")
   # fit = naiveBayes(school ~ reason + address + guardian, data = tr_dat1)
   # error on training set
   tr_predicted = predict(fit, tr_dat1, type = 'class')
@@ -213,6 +241,8 @@ legend("bottomright", c("training data", "testing data"), pch = 15, col = c("red
 
 
 ```
+
+Our learning curve has a high bias
 
 ```{r}
 tr_dat$freetime3 = factor(ifelse(tr_dat$freetime >= 3, yes = "fTime > 3", no = 'fTime < 3'))
@@ -286,7 +316,7 @@ fit3 = naiveBayes(passingGrade ~ Dalc + studytime+ G1,data = tr_dat)
 ```
 
 ```{r}
-fit3$tables$absences
+fit3$tables$Dalc
 ```
 
 ```{r}
