@@ -1,7 +1,7 @@
 ---
 title: "Student Alcohol Consumption"
 author: "Antonio Soto, Andrew Diesh, Jason Fitzgerald"
-date: "April 22, 2017"
+date: "May 12, 2017"
 output: html_document
 ---
   
@@ -10,8 +10,11 @@ knitr::opts_chunk$set(prompt=TRUE, comment="", echo=TRUE)
 ```
 
 ###**Objective**
-Given the tools and techniques learned throughout the past four months, we want to use these to analyze a dataset of our choosing and answer some questions using prediction models. We decided to work with the student alcohol consumption dataset, which focuses on alcohol consumption in Portugal. This data set was gathered during the 2005-2006 school year from a survey of students in a Portuguese language course from the Alentejo region of Portugal.Paulo Cortez and Alice Silva went on to use this dataset for their study, _Using Data Mining to Predict Secondary School Student Performance_. We want to predict whether students passed or failed based on the features gatheres in this data set. The data was acquired from Kaggle, a data science platform, at https://www.kaggle.com/uciml/student-alcohol-consumption. 
+Given the tools and techniques learned throughout the past four months, we want to use these to analyze a dataset of our choosing and answer some questions using prediction models. We decided to work with a dataset which focused on student alcohol consumption for a secondary school in Portugal. 
 
+This dataset was gathered during the 2005-2006 school year from a survey of students in a Portuguese language course from the Alentejo region of Portugal.Paulo Cortez and Alice Silva went on to use this dataset for their study, _Using Data Mining to Predict Secondary School Student Performance_. We want to predict whether students passed or failed based on the features gathered in this dataset. The data was acquired from Kaggle, a data science platform, at https://www.kaggle.com/uciml/student-alcohol-consumption. Since we were approaching this data from an American perspective we first had to find out what the legal drinking age was in Portugal. Otherwise we might interpret these findings as though American drinking laws were the norm. At the time of this study, the legal drinking age in Portugal for beer, wine, and other non-spirit drinks was 16. At 18 this restriction was lifted and an individual may purchase any drink.
+
+In order to facilitate our exercise we used various R libraries and the utility files which allowed us to create training and testing data sets.
 ```{r}
 library(rpart)
 library(rpart.plot)
@@ -19,15 +22,17 @@ library(maptree)
 library(e1071)
 
 # jason
-dat = read.csv("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/student-por.csv", stringsAsFactors = T)
-source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
-source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
+# dat = read.csv("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/student-por.csv", stringsAsFactors = T)
+# source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/class-util.R")
+# source("/Users/jasonfitzgerald/Desktop/463Data/MiningProject/lin-regr-util.R")
+
 # andrew
 # dat = read.csv("/Users/AndrewDiesh/Desktop/student-por.csv", stringsAsFactors = T)
 # source("/Users/AndrewDiesh/Desktop/class-util.R") 
 # source("/Users/AndrewDiesh/Documents/CST\ 463/HW10/lin-regr-util.R")
+
 # antonio
-#dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
+# dat = read.csv("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/student-por.csv", stringsAsFactors = T)
 # source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/class-util.R")
 # source("C:/Users/Antonio S/Documents/College/CSUMB-Spring'17/CST463-DataMining/FinalPro/lin-regr-util.R")
 set.seed(123)
@@ -47,8 +52,7 @@ lbs = c(paste (names(table(dat$pieAges)), '-', round(table(dat$pieAges)/nrow(dat
 pie(ageOfStudents, labels= lbs, main = 'Student Ages')
 ```
 
-Now that we have an understanding of the different age groups in the class, we would like to explore how many males and females are enrolled in the course. 
-
+Now that we have an understanding of the different age groups in the class, we would like to explore how many males and females are enrolled in the course.
 
 ```{r}
 
@@ -57,10 +61,9 @@ plot(dat$sex, main = "Student's Gender", col = "red4", ylim = c(0, 400))
 
 ```
 
-We can see that there are more girls (383) taking the class than males (266). 
+We can see that there are more female (383) than male students (266). 
 
-Our models will try to predict what the student's final grades will be.
-Secondary and higher education in Portugal uses a 20-point grading scale.
+Our models will try to predict what the student's final grades will be. As such we need to understand how the grading system in Portugal works. Secondary and higher education in Portugal uses a 20-point grading scale.
 
 18-20 indicates **excellent**, it's equivalent to an A+.
 
@@ -74,7 +77,7 @@ Secondary and higher education in Portugal uses a 20-point grading scale.
 
 1-6.99 indicates **very poor**, it's equivalent to an F.
 
-Here we'll take a look at the grade distribution for male and female students. 
+Here we'll take a look at the grade distribution between male and female students. It's vital to remember we have 117 more female students than male students.
 
 ```{r}
 par(mfrow=c(1, 2))
@@ -82,13 +85,8 @@ hist(dat[dat$sex=="M", ]$G3, main="Male Students' Final Grades", xlab="Final Gra
 hist(dat[dat$sex=="F", ]$G3, main="Female Students' Final Grades", xlab="Final Grades", col="lightblue", ylim=c(0,100))
 ```
 
-
-
-### Variable Importance
-
-The purpose of our report is to understand reasons why students are not passing their course. Our model has some significant predictor variables used to predict a student's final grade earned for the course taken. Below, we can see some of these variables that can effect the final grade negatively.  
-
-
+###**Variable Importance**
+The data set contains 30 features corresponding to each student which we'll use to make our models and predictions. Below, we can see just how important various features are and how much they can affect the students' final grade.
 ```{r}
 fit = rpart(G3 ~ studytime + freetime + goout + absences + Dalc + Walc + activities,  data=dat, method="class")
 ```
@@ -102,7 +100,7 @@ barplot(fit$variable.importance, main = "Variable Importance Plot", horiz = TRUE
 As we can see, Dalc (workday alcohol consumption) and absenses are the most detrimental for a student's final grade for the course. 
 
 
-### Workday alcohol consumption
+###**Workday Alcohol Consumption**
 
 Since we know that workday alcohol consumption plays such a significant impact on a student's grade, we thought it would be best to explore this to gain an understanding of how students consume their alcohol. 
 
@@ -125,16 +123,13 @@ legend("topright", c("weekend consumption", "work day consumption"), pch = 15, c
 
 The density plot has two lines, one for weekend alcohol consumption, and another for work day consumption. We can conclude from our data that more students partake in consuming alcoholic beverages during a work day.
 
-
 It's reasonable to believe that the higher number of absences a student has, the lower their final grade might be. As such, we'll take a look at the number of absences for this data. For a given number of absences, we'll see how many students were absent that number of times.
-
 
 ```{r}
 par(mar=c(3, 10, 3, 3))
 barplot(sort(table(dat$absences), decreasing=FALSE), horiz=TRUE, las=1, main="Frequency", col="firebrick", ylab="Number of Absences", xlim=c(0, 250))
 grid(nx=25, ny=0, col="black")
 ```
-
 
 
 ```{r}
@@ -148,13 +143,9 @@ grid()
 ```
 
 
-This density plot of three lines shows the distibution of grades for all the students. With the line red being the first test, the green line being the sceond, and blue line being the final grade. We pushed the grade from 20 points possible to 100. We can conclude that the average grade for students is around 12 out of 20 points (60%), which resembles a bell curve. 
+Each student had 3 grades: the first 2 were after mid-semester exams and the last grade was their final grade for the course. This density plot of three lines shows the distibution of grades for all the students. With the line red being the first test, the green line being the second, and blue line being the final grade. We pushed the grade from 20 points possible to 100. We can conclude that the average grade for students is around 12 out of 20 points (60%), which resembles a bell curve. 
 
-
-
-# Splitting the data
-
-
+###**Splitting the data**
 ```{r}
 split = split_data(dat)
 tr_dat = split[[1]]
@@ -184,7 +175,7 @@ tr_dat$passingGrade = factor(ifelse(tr_dat$G3 >= 12, "Pass", "Fail"))
 ```{r}
 
 fit = rpart(passingGrade ~ absences + studytime + Dalc, data = te_dat, method = "class")
-prp(fit, extra = 106, varlen = -10, main ="Classifiation for score over 60%", box.col = c("red", "green")[fit$frame$yval])
+prp(fit, extra = 106, varlen = -10, main ="Classification for score over 60%", box.col = c("red", "green")[fit$frame$yval])
 
 
 ```
@@ -239,7 +230,7 @@ legend("bottomright", c("training data", "testing data"), pch = 15, col = c("red
 
 ```
 
-Our learning curve has a high bias since our test data error flatens out quickly, while the training data's curve is established immediately. Our graph has underfitting due to a lack of data and features, which do not fit our data well enough. 
+Our learning curve has a high bias since our test data error flattens out quickly, while the training data's learning curve is established immediately. Our graph has underfitting due to a lack of data and features, which do not fit our data well enough. 
 
 
 ```{r}
@@ -304,7 +295,7 @@ lines(tr_sizes, te_errs, type = 'b',lwd = 3, col = 'blue')
 legend("topright", c("training data", "testing data"), pch = 15, col = c("red", "blue"), inset = 0.05)
 ```
 
-This model had high bias from the not having enough data, but the error rate was low from using naive bayes. To fix this we will implement more features in the next model down below.
+This model had high bias from not having enough data, but the error rate was low from using Naive Bayes. To fix this we will implement more features in the next model down below.
 
 ```{r}
 fit3 = naiveBayes(passingGrade ~G1 + G2 + reason + address + guardian + Fjob + Mjob + Fedu +Medu + absences + paid + traveltime,data = tr_dat)
@@ -353,7 +344,6 @@ The first challenge we encountered came up before we even imported the data. The
 
 As soon as we started building models we immediately used linear modeling since it was the first one we learned. However, because the majority of our data features were categorical, this wouldn't work well with linear modeling. After a short conversation with the professor we pursued using classification trees for our modeling.
 
+Once we had some models and created learning curves from them we noticed trends of high bias. To alleviate this we decided to include more input features in our modeling.
 
-
-
-
+In the end we had a model which predicted well. However, many of our setbacks could have been avoided if we had more data to create models with. It's something we'll immediately take into consideration in future data science projects and efforts.
